@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:uno",
-    "sketch": "screen-spike.ino",
-    "port": "/dev/tty.usbmodem1201"
-}

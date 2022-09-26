@@ -52,11 +52,7 @@ void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
-  lcd.print("boobs!");
-  lcd.setCursor(5, 1);
-  lcd.print("thomas");
-  lcd.setCursor(5, 1);
-  lcd.print("noah");
+  lcd.print("hello");
 }
 
 void loop() {
