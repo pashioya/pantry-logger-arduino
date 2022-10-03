@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include <LiquidCrystal.h>
 /*
     Converts a number to a string of the defined size and replaces the empty
     spots with the defined padChar
@@ -12,4 +12,19 @@ String numToString(int number, int size, char padChar) {
         s = padChar + s;
     }
     return s;
+}
+
+
+
+String getCharLine(char repeatChar) {
+    String out = "";
+    for(int i = 0; i < 16; i++) {
+        out += repeatChar;
+    }
+    return out;
+}
+
+void changeLine(LiquidCrystal screenObj, int line, char repeatChar) {
+    screenObj.setCursor(0, line);
+    screenObj.print(getCharLine(repeatChar));
 }
