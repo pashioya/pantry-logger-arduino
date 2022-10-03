@@ -1,36 +1,41 @@
 #include <Arduino.h>
-#include <TempHum.h>
-#include <Brightness.h>
- 
-void setup(){
- 
-  Serial.begin(9600);
-  delay(500);//Delay to let system boot
-  Serial.println("DHT11 Humidity & temperature Sensor\n\n");
-  delay(1000);//Wait before accessing Sensor
- 
-}//end "setup()"
- 
-void loop(){
-  //Start of Program 
+#include <LiquidCrystal.h>
+#include <Util.h>
 
-  readPin();
-    
-  Serial.print("Current humidity = ");
-  Serial.print(readHum());
-  Serial.print("%  ");
-  Serial.print("temperature = ");
-  Serial.print(readTemp()); 
-  Serial.println("C  ");
 
-  
-  Serial.print("Brightness = ");
-	Serial.println(readBright()); // light intensity
-								// high values for bright environment
-								// low values for dark environment
-  
-  delay(5000);//Wait 5 seconds before accessing sensor again.
- 
-  //Fastest should be once every two seconds.
- 
-}// end loop(
+// initialize the library by associating any needed LCD interface pin
+// with the arduino pin number it is connected to
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+
+const int buttonLeft = 7;
+const int buttonRight = 6;
+int buttonStateLeft = 0;
+int buttonStateRight = 0;
+
+void setup() {
+    // set up the LCD's number of columns and rows:
+    lcd.begin(16, 2);
+    // Print a message to the LCD.
+    lcd.print("potentiometer");
+
+    //pinMode(6, INPUT);
+    //pinMode(7, INPUT);
+}
+
+void loop() {
+    //int sensorValue = analogRead(A0);
+    lcd.setCursor(0, 1);
+    //lcd.print(numToString(sensorValue, 5, ' '));
+
+    //buttonStateLeft = digitalRead(buttonLeft);
+    //buttonStateRight = digitalRead(buttonRight);
+    /*
+    if (buttonStateLeft == HIGH && buttonStateRight != HIGH) {
+        lcd.setCursor(0, 0);
+        lcd.print("button left");
+    } else if(buttonStateLeft != HIGH && buttonStateRight == HIGH) {
+        lcd.setCursor(0, 0);
+        lcd.print("button right");
+    }*/
+}
