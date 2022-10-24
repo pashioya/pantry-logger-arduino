@@ -1,6 +1,6 @@
 #include <dht.h>
 
-#define dht_apin A0 // Analog Pin sensor is connected to
+#define dht_apin A1 // Analog Pin sensor is connected to
  
 dht DHT;
 
@@ -9,9 +9,11 @@ void readPin() {
 }
 
 float readTemp() {
+    readPin();
     return DHT.temperature;
 }
 
 float readHum() {
+    readPin();
     return DHT.humidity;
 }
