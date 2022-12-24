@@ -11,7 +11,9 @@
 #include "ESP8266_AT.h"
 
 /* Define Required fields shown below */
-#define DOMAIN          "api.thingspeak.com"
+#define DOMAIN          "pantryloggrdata.henrybley.com"
+//#define DOMAIN          "95.179.130.168"
+//#define DOMAIN        "api.thingspeak.com"
 #define PORT            "80"
 #define API_WRITE_KEY   "PSR0RKR5AN754B1Z"
 #define CHANNEL_ID      "1887657"
@@ -22,6 +24,13 @@
 char _buffer[150];
 uint8_t Connect_Status;
 uint8_t Sample = 0;
+
+int count = 0;
+
+
+int tempReading = 0;
+int humReading = 0;
+int brightReading = 0;
 
 
 // initialize the library by associating any needed LCD interface pin
@@ -74,13 +83,43 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(buttonRight), leftButtonISR, CHANGE);
     pinMode(buttonLeft, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(buttonLeft), rightButtonISR, CHANGE);
+
+    
+
+    tempReading = readTemp();
+    humReading = readHum();
+    brightReading = readBright();
 }
 
 void loop() {
 
-    int tempReading = readTemp();
-    int humReading = readHum();
-    int brightReading = readBright();
+    if(count++ > 500) {
+        Connect_Status = ESP8266_connected();
+        if(Connect_Status == ESP8266_NOT_CONNECTED_TO_AP)	/*Again check connection to WIFI*/
+        ESP8266_JoinAccessPoint(SSID, PASSWORD);		/*Connect to WIFI*/
+        if(Connect_Status == ESP8266_TRANSMISSION_DISCONNECTED)
+        ESP8266_Start(0, DOMAIN, PORT);			/*Connect to TCP port*/
+
+        memset(_buffer, 0, 150);
+        memset(_buffer, 0, 150);
+        //need to figure out how to get response correctly
+        String response = "success";
+        //sprintf(_buffer, "GET /update?api_key=%s&field1=%d&field=%2d&field3=%d", API_WRITE_KEY, tempReading,  humReading, brightReading); 	/*connect to thingspeak server to post data using your API_WRITE_KEY*/
+        sprintf(_buffer, "GET /data/qaxkl/temp/%d/hum/%d/bright/%d", tempReading,  humReading, brightReading); 	/*connect to thingspeak server to post data using your API_WRITE_KEY*/
+        ESP8266_Send(_buffer);
+
+        if(true) { //WaitForExpectedResponse("success"))
+            count = 0;
+            tempReading = readTemp();
+            humReading = readHum();
+            brightReading = readBright();
+        }
+    }
+
+    int tempReading = (tempReading+readTemp())/2;
+    int humReading = (humReading+readHum())/2;
+    int brightReading = (brightReading+readBright())/2;
+
     //write header
     if(lastHeader != Header) {
         lastHeader = Header;
@@ -90,18 +129,7 @@ void loop() {
         lcd.print(lastHeader);
     }
 
-    lcd.setCursor(5, 1);
-    Connect_Status = ESP8266_connected();
-    if(Connect_Status == ESP8266_NOT_CONNECTED_TO_AP)	/*Again check connection to WIFI*/
-    ESP8266_JoinAccessPoint(SSID, PASSWORD);		/*Connect to WIFI*/
-    if(Connect_Status == ESP8266_TRANSMISSION_DISCONNECTED)
-    ESP8266_Start(0, DOMAIN, PORT);			/*Connect to TCP port*/
-
-    memset(_buffer, 0, 150);
-    memset(_buffer, 0, 150);
-    sprintf(_buffer, "GET /update?api_key=%s&field1=%d&field2=%d&field3=%d", API_WRITE_KEY, tempReading,  humReading, brightReading); 	/*connect to thingspeak server to post data using your API_WRITE_KEY*/
-    ESP8266_Send(_buffer);
-    delay(5000); 					/* Thingspeak server delay */
+    lcd.setCursor(5, 1);					/* Thingspeak server delay */
     
     
     lcd.setCursor(0, 1);
